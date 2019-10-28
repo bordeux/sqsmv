@@ -1,15 +1,18 @@
 const AWS = require('aws-sdk');
+const chunk = require('chunk');
+require("array-foreach-async");
+
 
 module.exports = class Sqsmv {
-    constructor(){
+    constructor() {
         this.sqs = new AWS.SQS({apiVersion: '2012-11-05'});
         this.source = null;
         this.destination = null;
         this.maxMessages = 10;
-        this.waitTimeSeconds = 1;
+        this.waitTimeSeconds = 0;
     }
 
-    async setSource(source){
+    async setSource(source) {
         this.source = await this.getQueueUrl(source);
     }
 
@@ -17,8 +20,8 @@ module.exports = class Sqsmv {
         this.destination = await this.getQueueUrl(destination);
     }
 
-    async getQueueUrl(name){
-        if(name.startsWith('https://')){
+    async getQueueUrl(name) {
+        if (name.startsWith('https://')) {
             return name;
         }
 
@@ -28,28 +31,35 @@ module.exports = class Sqsmv {
         return data.QueueUrl;
     }
 
-    async tick(){
+    async tick(parallel) {
+        let items = [];
+        for (let i = 0; i < parallel; i++) {
+            items.push(this.process());
+        }
+
+        return (await Promise.all(items))
+            .reduce((total, current) => total + current);
+    }
+
+    async process() {
         let messages = (await this.sqs.receiveMessage({
             QueueUrl: this.source,
             MaxNumberOfMessages: this.maxMessages,
             WaitTimeSeconds: this.waitTimeSeconds
         }).promise()).Messages;
-        if(!messages || !messages.length){
-            return false;
+        if (!messages || !messages.length) {
+            return 0;
         }
 
-        await this.sqs.sendMessageBatch({
-            QueueUrl: this.destination,
-            Entries: messages.map((message) => {
-                return {
-                    Id: message.MessageId,
-                    MessageBody: message.Body,
-                    MessageAttributes: message.MessageAttributes || {},
-                };
-            })
-        }).promise();
+        await this._sendBulk(messages.map((message) => {
+            return {
+                Id: message.MessageId,
+                MessageBody: message.Body,
+                MessageAttributes: message.MessageAttributes || {},
+            };
+        }));
 
-        this.sqs.deleteMessageBatch({
+        await this.sqs.deleteMessageBatch({
             Entries: messages.map((message) => {
                 return {
                     Id: message.MessageId,
@@ -57,8 +67,26 @@ module.exports = class Sqsmv {
                 }
             }),
             QueueUrl: this.source
-        });
+        }).promise();
 
-        return true;
+        return messages.length;
+    }
+
+
+    async _sendBulk(messages) {
+        try {
+            await this.sqs.sendMessageBatch({
+                QueueUrl: this.destination,
+                Entries: messages
+            }).promise();
+        } catch (e) {
+            if (e.code != "AWS.SimpleQueueService.BatchRequestTooLong" || messages.length <= 1) {
+                throw e;
+            }
+
+            await chunk(messages, Math.floor(messages.length / 2))
+                .forEachAsync(async (items) => await this._sendBulk(items));
+
+        }
     }
 };
