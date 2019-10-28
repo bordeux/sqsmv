@@ -17,6 +17,18 @@ No configurations. Script reading secrets directly from ENV or from AWS cli conf
 
 ## Usage
 
+Usage: sqsmv -s [string] -d [string] -p [num]
+
+    Options:
+      --help             Show help                                         [boolean]
+      --version          Show version number                               [boolean]
+      -s, --source       Source queue (name or url)                       [required]
+      -d, --destination  Destination queue (name or url)                  [required]
+      -p, --parallel                                        [required] [default: 10]
+    
+    Examples:
+      sqsmv -s main_dead -d main  Move messages from main_dead back to main queue
+
 Supply source and destination URL endpoints.
 
     sqsmv -s https://region.queue.amazonaws.com/123/queue-a -d https://region.queue.amazonaws.com/123/queue-b
