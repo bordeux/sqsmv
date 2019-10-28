@@ -22,6 +22,7 @@ Supply source and destination URL endpoints.
     sqsmv -s https://region.queue.amazonaws.com/123/queue-a -d https://region.queue.amazonaws.com/123/queue-b
 
 or
+
     sqsmv -s queue-a -d queue-b
 
 ## Seeing is believing :)
@@ -41,6 +42,6 @@ Thank you for [SQSmv implementation in go](https://github.com/scottjbarr/sqsmv)
 
 The MIT License (MIT)
 
-Copyright (c) 2016-2018 Scott Barr
+Copyright (c) Chris Bednarczyk
 
 See [LICENSE.md](LICENSE.md)
