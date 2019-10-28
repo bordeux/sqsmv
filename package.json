@@ -1,0 +1,31 @@
+{
+  "name": "sqsmv",
+  "version": "1.0.0",
+  "description": "Move SQS messages between queues",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bordeux/sqsmv.git"
+  },
+  "keywords": [
+    "sqs",
+    "sqsmv",
+    "aws"
+  ],
+  "author": "Krzysztof Bednarczyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bordeux/sqsmv/issues"
+  },
+  "homepage": "https://github.com/bordeux/sqsmv#readme",
+  "dependencies": {
+    "aws-sdk": "^2.557.0",
+    "yargs": "^14.2.0"
+  },
+  "bin": {
+    "sqsmv": "./cli.js"
+  }
+}
