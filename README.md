@@ -7,12 +7,12 @@ Move all messages from one SQS queue, to another.
 
 ### Source
 
-    npm install -g sqsmv
+    npm install -g @bordeux/sqsmv
 
 
 ## Configuration
 
-No configurations. Script reading secrets directly from ENV or from AWS cli configuration. You can control script by official AWS Environment variables like:  `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID` ,`AWS_REGION`,`AWS_PROFILE`
+No configurations. Script reading secrets directly from ENV or from AWS cli configuration. You can control script by official AWS Environment variables like:  `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID` ,`AWS_REGION` or just `AWS_PROFILE`
 
 
 ## Usage
