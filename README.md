@@ -19,6 +19,7 @@ No configurations. Script reading secrets directly from ENV or from AWS cli conf
 
 Usage: sqsmv -s [string] -d [string] -p [num]
 
+    
     Options:
       --help             Show help                                         [boolean]
       --version          Show version number                               [boolean]
