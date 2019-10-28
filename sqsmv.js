@@ -41,7 +41,6 @@ module.exports = class Sqsmv {
         await this.sqs.sendMessageBatch({
             QueueUrl: this.destination,
             Entries: messages.map((message) => {
-                console.log(message);
                 return {
                     Id: message.MessageId,
                     MessageBody: message.Body,
