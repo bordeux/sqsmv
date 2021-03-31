@@ -23,9 +23,9 @@
   "homepage": "https://github.com/bordeux/sqsmv#readme",
   "dependencies": {
     "array-foreach-async": "^1.0.1",
-    "aws-sdk": "^2.557.0",
+    "aws-sdk": "^2.876.0",
     "chunk": "0.0.2",
-    "yargs": "^14.2.0"
+    "yargs": "^14.2.3"
   },
   "bin": {
     "sqsmv": "./cli.js"
