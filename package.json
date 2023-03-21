@@ -1,6 +1,6 @@
 {
   "name": "@bordeux/sqsmv",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Move SQS messages between queues",
   "main": "cli.js",
   "scripts": {
@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/bordeux/sqsmv#readme",
   "dependencies": {
+    "@aws-sdk/client-sqs": "^3.295.0",
     "array-foreach-async": "^1.0.1",
-    "aws-sdk": "^2.876.0",
-    "chunk": "0.0.2",
-    "yargs": "^14.2.3"
+    "chunk": "0.0.3",
+    "yargs": "^17.7.1"
   },
   "bin": {
     "sqsmv": "./cli.js"
