@@ -1,11 +1,11 @@
-const AWS = require('aws-sdk');
+const { SQSClient, ReceiveMessageCommand, DeleteMessageBatchCommand, SendMessageBatchCommand, GetQueueUrlCommand } = require('@aws-sdk/client-sqs');
 const chunk = require('chunk');
 require("array-foreach-async");
 
 
 module.exports = class Sqsmv {
     constructor() {
-        this.sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+        this.sqs = new SQSClient({});
         this.source = null;
         this.destination = null;
         this.maxMessages = 10;
@@ -25,9 +25,9 @@ module.exports = class Sqsmv {
             return name;
         }
 
-        let data = await this.sqs.getQueueUrl({
+        const data = await this.sqs.send(new GetQueueUrlCommand({
             QueueName: name
-        }).promise();
+        }));
         return data.QueueUrl;
     }
 
@@ -42,11 +42,12 @@ module.exports = class Sqsmv {
     }
 
     async process() {
-        let messages = (await this.sqs.receiveMessage({
+        const result = await this.sqs.send(new ReceiveMessageCommand({
             QueueUrl: this.source,
             MaxNumberOfMessages: this.maxMessages,
             WaitTimeSeconds: this.waitTimeSeconds
-        }).promise()).Messages;
+        }));
+        const messages = result.Messages;
         if (!messages || !messages.length) {
             return 0;
         }
@@ -59,7 +60,7 @@ module.exports = class Sqsmv {
             };
         }));
 
-        await this.sqs.deleteMessageBatch({
+        await this.sqs.send(new DeleteMessageBatchCommand({
             Entries: messages.map((message) => {
                 return {
                     Id: message.MessageId,
@@ -67,7 +68,7 @@ module.exports = class Sqsmv {
                 }
             }),
             QueueUrl: this.source
-        }).promise();
+        }));
 
         return messages.length;
     }
@@ -75,12 +76,12 @@ module.exports = class Sqsmv {
 
     async _sendBulk(messages) {
         try {
-            await this.sqs.sendMessageBatch({
+            await this.sqs.send(new SendMessageBatchCommand({
                 QueueUrl: this.destination,
                 Entries: messages
-            }).promise();
+            }))
         } catch (e) {
-            if (e.code != "AWS.SimpleQueueService.BatchRequestTooLong" || messages.length <= 1) {
+            if (e.message !== "BatchRequestTooLong" || messages.length <= 1) {
                 throw e;
             }
 
