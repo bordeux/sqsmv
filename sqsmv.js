@@ -81,7 +81,7 @@ module.exports = class Sqsmv {
                 Entries: messages
             }))
         } catch (e) {
-            if (e.message !== "BatchRequestTooLong" || messages.length <= 1) {
+            if (e.message !== "BatchRequestTooLong" || messages.length <= 1 || e.code === "BatchRequestTooLong") {
                 throw e;
             }
 
