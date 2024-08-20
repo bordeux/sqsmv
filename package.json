@@ -1,6 +1,6 @@
 {
   "name": "@bordeux/sqsmv",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Move SQS messages between queues",
   "main": "cli.js",
   "scripts": {
